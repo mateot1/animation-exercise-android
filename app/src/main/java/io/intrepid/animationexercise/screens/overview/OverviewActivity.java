@@ -49,10 +49,23 @@ public class OverviewActivity extends BaseMvpActivity<OverviewContract.Presenter
         progressSpinner.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    //TODO: complete this method
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (catImageView.getAlpha() < 1) {
+            catImageView.setAlpha(1f);
+            catImageView.setTranslationX(0);
+        }
+    }
+
     @Override
     public void goToCatDetail(Cat cat) {
-        startActivity(DetailActivity.getStartIntent(this, cat));
+        catImageView.animate()
+                .alpha(0f)
+                .translationXBy(60)
+                .setDuration(500)
+                .withEndAction(() -> startActivity(DetailActivity.getStartIntent(this, cat)))
+                .start();
     }
 
     @Override

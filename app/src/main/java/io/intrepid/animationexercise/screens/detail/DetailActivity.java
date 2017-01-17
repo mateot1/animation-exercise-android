@@ -1,5 +1,6 @@
 package io.intrepid.animationexercise.screens.detail;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
+import android.view.animation.BounceInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -84,23 +86,43 @@ public class DetailActivity extends BaseMvpActivity<DetailContract.Presenter> im
         presenter.onCatImageClicked();
     }
 
-    //TODO: complete this method
     @Override
     public void animateImage() {
-        super.onBackPressed();
+        catContainer.animate()
+                .alpha(0f)
+                .setDuration(500)
+                .withEndAction(() -> super.onBackPressed())
+                .start();
+        overridePendingTransition(android.R.anim.fade_out, android.R.anim.fade_in);
     }
 
     @Override
     public void showCat() {
-        viewTapButton.setVisibility(View.GONE);
-        catContainer.setVisibility(View.VISIBLE);
+        viewTapButton.animate()
+                .scaleX(0f)
+                .scaleY(0f)
+                .setDuration(250)
+                .withEndAction(() -> onButtonGone())
+                .start();
     }
 
-    //TODO: complete this method
+    private void onButtonGone() {
+        viewTapButton.setVisibility(View.GONE);
+        catContainer.setAlpha(0f);
+        catContainer.setVisibility(View.VISIBLE);
+        catContainer.animate()
+                .alpha(1f)
+                .setDuration(250)
+                .start();
+    }
+
     @Override
     public void animatePowerUp() {
         Drawable drawable = powerUpBar.getDrawable();
-        drawable.setLevel(10000);
+        drawable.setLevel(0);
+        ObjectAnimator animator = ObjectAnimator.ofInt(drawable, "level", 10000);
+        animator.setInterpolator(new BounceInterpolator());
+        animator.start();
     }
 
     @Override
